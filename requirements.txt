@@ -1,0 +1,13 @@
+easydict
+scipy
+lmdb    
+natsort
+colour
+ISR==2.2.0
+scikit-image==0.14.2
+opencv-python==4.5.2.54
+torch==1.8.1
+torchvision==0.9.1
+h5py==2.10.0
+flask
+flask_cors

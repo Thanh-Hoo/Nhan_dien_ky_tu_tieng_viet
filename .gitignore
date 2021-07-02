@@ -1,0 +1,16 @@
+# models
+src/models/*
+
+mobile_app/node_modules/
+mobile_app/.expo/
+mobile_app/npm-debug.*
+mobile_app/*.jks
+mobile_app/*.p8
+mobile_app/*.p12
+mobile_app/*.key
+mobile_app/*.mobileprovision
+mobile_app/*.orig.*
+mobile_app/web-build/
+
+# macOS
+mobile_app/.DS_Store

@@ -1,0 +1,29 @@
+{
+  "main": "node_modules/expo/AppEntry.js",
+  "scripts": {
+    "start": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "web": "expo start --web",
+    "eject": "expo eject"
+  },
+  "dependencies": {
+    "base-64": "^0.1.0",
+    "expo": "~41.0.1",
+    "expo-camera": "^11.0.3",
+    "expo-status-bar": "~1.0.4",
+    "fs": "^0.0.1-security",
+    "react": "^16.13.1",
+    "react-dom": "16.13.1",
+    "react-native": "https://github.com/expo/react-native/archive/sdk-41.0.0.tar.gz",
+    "react-native-base64": "^0.2.1",
+    "react-native-paper": "^4.9.1",
+    "react-native-web": "~0.13.12",
+    "rn-fetch-blob": "^0.12.0",
+    "utf8": "^3.0.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.9.0"
+  },
+  "private": true
+}

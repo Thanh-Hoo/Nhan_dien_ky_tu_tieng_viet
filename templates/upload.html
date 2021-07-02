@@ -1,0 +1,242 @@
+{%extends "base.html"%}
+
+{% block title %}SCENE TEXT DEMO {% endblock%}
+{% block content %}
+
+
+
+<div class="jumbotron">
+    <h1 class="display-4" style="text-align: center; color: #56cc9d;">SCENE TEXT DEMO</h1>
+    <!-- <p class="lead">Web service for Scene matching.</p> -->
+</div>
+
+
+<style>
+    body {
+        font-family: 'Segoe UI';
+        font-size: 12pt;
+    }
+
+    header h1 {
+        font-size: 12pt;
+        color: #fff;
+        background-color: #1BA1E2;
+        padding: 20px;
+    }
+
+    article {
+        width: 80%;
+        margin: auto;
+        margin-top: 10px;
+    }
+
+    div.gallery {
+        border: 1px solid #ccc;
+    }
+
+    div.gallery:hover {
+        border: 1px solid #777;
+    }
+
+    div.gallery img {
+        width: 100%;
+        height: auto;
+    }
+
+    div.desc {
+        padding: 15px;
+        text-align: center;
+    }
+
+    * {
+        box-sizing: border-box;
+    }
+
+    .responsive {
+        padding: 0 6px;
+        float: left;
+        width: 30.99999%;
+    }
+
+    @media only screen and (max-width: 700px) {
+        .responsive {
+            width: 49.99999%;
+            margin: 6px 0;
+        }
+    }
+
+    @media only screen and (max-width: 500px) {
+        .responsive {
+            width: 100%;
+        }
+    }
+
+    .clearfix:after {
+        content: "";
+        display: table;
+        clear: both;
+    }
+</style>
+
+
+</style>
+
+<div class="samples_list">
+
+</div>
+
+<div class="container" id="uploadContainer">
+
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="responsive">
+
+                <img id="queryImage" width="500" height="300">
+                <input id="inputQuery" type='file'>
+            </div>
+        </div>
+        <!-- <div class="col-lg-6">
+            <form id='post-form' class='post-form' method='post'>
+                <label for='files'>Select multiple images: </label>
+                <input id='dataBases' accept="image/*" type='file' multiple required="required" />
+                <output id="databaseupload"> </output>
+            </form>
+        </div> -->
+        <div class="col-lg-6">
+        <div class="container" id="uploadContainer">
+        <div id="json"></div>
+        </div>
+        </div>
+    </div>
+    <div>
+
+
+        <button type="button" class="btn btn-primary" onclick="serverPredict()">
+            Server Predict
+        </button>
+
+    </div>
+
+
+</div>
+
+
+<script>
+    $(document).ready( function () {
+    $('#myTable').DataTable();
+} );
+</script>
+<!-- Result -->
+
+
+<script type="text/javascript">
+
+    function serverPredict() {
+        // Query image
+        var sendData = {}
+        var queryImage_id = "queryImage"
+        sendData['queryImage'] = JSON.stringify({
+            'src': document.getElementById(queryImage_id).src,
+            'name': document.getElementById(queryImage_id).alt
+        })
+        // Database images
+        var i = 0;
+        var dataBaseImages = []
+        while (document.getElementById("dataBaseImages_" + String(i)) != null) {
+            var uploadImage_id = "dataBaseImages_" + String(i);
+            var caption_id = "captionID_" + String(i);
+            dataBaseImage = {
+                'src': document.getElementById(uploadImage_id).src,
+                'name': document.getElementById(uploadImage_id).alt,
+                'caption': document.getElementById(caption_id).caption
+            }
+
+            dataBaseImages.push(dataBaseImage)
+            i++;
+            console.log(i);
+        }
+        sendData['dataBaseImages'] = JSON.stringify(dataBaseImages)
+
+        $.ajax({
+            url: "./api/predictT",
+            type: "POST",
+            dataType: "json",
+            data: sendData,
+            success: function (response) {
+                var responseData = response;
+                console.log(responseData);
+                var jsonViewer = new JSONViewer();
+                document.querySelector("#json").innerHTML = "";
+                document.querySelector("#json").appendChild(jsonViewer.getContainer());
+                jsonViewer.showJSON(responseData)
+                // document.getElementById("result-before").innerHTML = JSON.stringify(responseData);
+            }
+        });
+    }
+</script>
+
+
+<script>
+
+
+    function readQueryFile() {
+
+        if (this.files && this.files[0]) {
+
+            var FR = new FileReader();
+
+            FR.addEventListener("load", function (e) {
+                document.getElementById("queryImage").src = e.target.result;
+                // document.getElementById("b64").innerHTML = e.target.result;
+            });
+            document.getElementById("queryImage").alt = this.files[0].name;
+            FR.readAsDataURL(this.files[0]);
+            var processDiv = document.getElementById("predictProcess");
+
+        }
+
+    }
+    document.getElementById("inputQuery").addEventListener("change", readQueryFile);
+</script>
+<script>
+    window.onload = function () {
+        //Check File API support
+        if (window.File && window.FileList && window.FileReader) {
+            var filesInput = document.getElementById("dataBases");
+            var output = document.getElementById("databaseupload");
+
+            filesInput.addEventListener("change", function (event) {
+                var files = event.target.files; //FileList object
+                output.innerHTML = "";
+                for (var index = 0; index < files.length; index++) {
+                    var file = files[index];
+                    //Only pics
+                    if (!file.type.match('image'))
+                        continue;
+                    var picReader = new FileReader();
+                    picReader.index = index;
+                    picReader.addEventListener("load", function (eventChangeImage) {
+                        var picFile = eventChangeImage.target;
+                        var div = document.createElement("div");
+                        div.setAttribute('class', 'responsive')
+                        div.innerHTML = "<div class='gallery' > <img id=dataBaseImages_"
+                            + String(picFile.index) + " src='" + picFile.result + "'" +
+                            "alt='" + file.name + "'/> </div> "
+                            + "<div class='caption' id=captionID_" + String(picFile.index) +">"+ " img " +  String(picFile.index) + "</div>";
+                        output.insertBefore(div, null);
+                    });
+                    //Read the image
+                    picReader.readAsDataURL(file);
+                }
+            });
+            // serverPredict()
+        } else {
+            console.log("Your browser does not support File API");
+        }
+    }
+</script>
+
+{% endblock %}
+
+
+<!-- SCRIPT -->
