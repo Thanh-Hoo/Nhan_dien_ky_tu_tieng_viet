@@ -64,7 +64,7 @@ const CameraModule = (props) => {
                                         const src = photo['base64']
 
                                         async function fetch_function() {
-                                            const response = await fetch("http://service.aiclub.cs.uit.edu.vn/easy_ocr_service/api/predict",{
+                                            const response = await fetch("http://192.168.20.156:3000/api/predict",{
                                                             mode: 'no-cors',
                                                             method: "POST",
                                                             headers: {
